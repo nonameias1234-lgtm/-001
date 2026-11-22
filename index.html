@@ -1,0 +1,583 @@
+<!doctype html>
+<html lang="kk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+</head>
+<body>
+<title>QazaqNFT</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Noto+Serif:wght@500;700&family=Nunito:wght@400;600;700&family=Noto+Sans:wght@400;600;700&display=swap">
+<style>
+/* Layout: gallery-boutique. Sticky header with ram-horn band, soft cards on cream, gold only for ornament and price. */
+:root{
+  --rose:#D96C8C; --blush:#FBE6EC; --lav:#E3D6F2; --gold:#C8A24A; --plum:#4E2347; --cream:#FFF9F4; --sky:#A9CCE3;
+  --bg:#FFF9F4; --fg:#4E2347; --muted:#7B5C77; --surface:#FFFFFF; --tint:#FBE6EC; --tag:#E3D6F2;
+  --line:#E6D3A8; --gold-text:#8A6A12; --btn:#B8456A; --btn-fg:#FFFFFF; --focus:#4E2347;
+  --shadow:0 10px 30px rgba(78,35,71,.10);
+  --f-display:'Playfair Display','Noto Serif',Georgia,serif;
+  --f-body:'Nunito','Noto Sans',system-ui,sans-serif;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#1D0F1C; --fg:#FBE6EC; --muted:#CDB2C6; --surface:#2A1728; --tint:#3A2038; --tag:#4A2F5E;
+    --line:#5E4A2A; --gold-text:#E2BE6A; --btn:#D96C8C; --btn-fg:#2A0F1F; --focus:#FBE6EC;
+    --shadow:0 10px 30px rgba(0,0,0,.4); color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#1D0F1C; --fg:#FBE6EC; --muted:#CDB2C6; --surface:#2A1728; --tint:#3A2038; --tag:#4A2F5E;
+  --line:#5E4A2A; --gold-text:#E2BE6A; --btn:#D96C8C; --btn-fg:#2A0F1F; --focus:#FBE6EC;
+  --shadow:0 10px 30px rgba(0,0,0,.4); color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  background:var(--bg) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='48'%3E%3Cpath d='M24 4L44 24L24 44L4 24Z' fill='none' stroke='%23C8A24A' stroke-opacity='.08' stroke-width='1'/%3E%3C/svg%3E");
+  color:var(--fg); font-family:var(--f-body); font-size:16px; line-height:1.6; margin:0;
+}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:30;background:var(--bg)}
+h1,h2,h3{font-family:var(--f-display);line-height:1.2;margin:0;text-wrap:balance}
+h1{font-size:clamp(2rem,7vw,3.6rem);font-weight:700}
+h2{font-size:clamp(1.5rem,4.5vw,2.2rem);font-weight:700}
+h3{font-size:1.1rem;font-weight:700}
+p{margin:0}
+a{color:inherit}
+:focus-visible{outline:3px solid var(--focus);outline-offset:3px;border-radius:6px}
+.wrap{max-width:1120px;margin-inline:auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.stack{display:flex;flex-direction:column;gap:1.25rem}
+.muted{color:var(--muted)}
+.price{color:var(--gold-text);font-weight:700}
+.eyebrow{font-size:.78rem;letter-spacing:.14em;text-transform:uppercase;color:var(--gold-text);font-weight:700}
+
+/* header */
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:color-mix(in srgb,var(--bg) 92%,transparent);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.bar{display:flex;align-items:center;gap:.75rem;flex-wrap:wrap;padding-block:.6rem}
+.brand{display:flex;align-items:center;gap:.5rem;text-decoration:none;font-family:var(--f-display);font-weight:700;font-size:1.3rem;margin-right:auto}
+.brand svg{width:34px;height:34px;color:var(--gold)}
+nav{display:none;width:100%;flex-direction:column;gap:.25rem;order:5;padding-bottom:.5rem}
+nav.open{display:flex}
+nav a{text-decoration:none;padding:.6rem .8rem;border-radius:12px;font-weight:600}
+nav a:hover{background:var(--tint)}
+nav a[aria-current="page"]{background:var(--tag)}
+.tools{display:flex;align-items:center;gap:.5rem}
+.wallet{font-size:.85rem;font-weight:700;color:var(--gold-text);border:1px solid var(--line);border-radius:999px;padding:.2rem .7rem;white-space:nowrap}
+.lang{display:flex;border:1px solid var(--line);border-radius:999px;overflow:hidden}
+.lang button{border:0;background:transparent;color:var(--fg);font:inherit;font-size:.8rem;font-weight:700;padding:.35rem .6rem;cursor:pointer}
+.lang button[aria-pressed="true"]{background:var(--btn);color:var(--btn-fg)}
+.menu-btn{border:1px solid var(--line);background:var(--surface);color:var(--fg);border-radius:12px;width:42px;height:42px;font-size:1.2rem;cursor:pointer}
+@media (min-width:900px){
+  nav{display:flex;flex-direction:row;width:auto;order:0;padding:0;margin-left:auto;gap:.1rem}
+  .brand{margin-right:0}
+  .menu-btn{display:none}
+}
+.orn{height:24px;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='24' viewBox='0 0 40 24'%3E%3Cg fill='none' stroke='%23C8A24A' stroke-width='1.6' stroke-linecap='round'%3E%3Cpath d='M20 20C14 20 9 16 10 11C11 6 18 6 19 10C19.6 13 16 14 15 12'/%3E%3Cpath d='M20 20C26 20 31 16 30 11C29 6 22 6 21 10C20.4 13 24 14 25 12'/%3E%3C/g%3E%3C/svg%3E") repeat-x center}
+.rule{height:3px;border-radius:3px;background:linear-gradient(90deg,transparent,var(--gold),transparent);background-size:200% 100%;animation:shimmer 5s linear infinite}
+@keyframes shimmer{from{background-position:200% 0}to{background-position:-200% 0}}
+
+/* test banner */
+.test{background:var(--lav);color:var(--plum);font-size:.85rem;text-align:center;padding:.35rem 0}
+.test .wrap{display:block}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .test{background:var(--tag);color:var(--fg)}}
+:root[data-theme="dark"] .test{background:var(--tag);color:var(--fg)}
+
+/* views */
+main{padding-block:1.5rem 3rem}
+.view{animation:rise .5s ease both}
+@keyframes rise{from{opacity:.01;transform:translateY(10px)}to{opacity:1;transform:none}}
+.section{padding-block:1.75rem}
+.head{display:flex;flex-direction:column;gap:.5rem;margin-bottom:1.25rem}
+.grid{display:grid;gap:1.1rem;grid-template-columns:repeat(auto-fill,minmax(min(100%,230px),1fr))}
+.hero{display:grid;gap:1.5rem;padding-block:1.5rem 1rem;align-items:center}
+.hero .copy{display:flex;flex-direction:column;gap:1.1rem}
+.hero-art{display:flex;justify-content:center}
+.hero-art .frame{width:min(100%,300px);transform:rotate(2deg)}
+@media (min-width:860px){.hero{grid-template-columns:1.2fr .8fr}}
+.actions{display:flex;flex-wrap:wrap;gap:.7rem}
+
+/* buttons */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:.4rem;border:1.5px solid var(--btn);background:var(--btn);color:var(--btn-fg);font:inherit;font-weight:700;padding:.75rem 1.4rem;min-height:46px;border-radius:999px;cursor:pointer;text-decoration:none;transition:transform .2s,box-shadow .2s}
+.btn:hover{transform:translateY(-2px);box-shadow:var(--shadow)}
+.btn.ghost{background:var(--surface);color:var(--fg);border-color:var(--gold)}
+.btn[disabled]{opacity:.55;cursor:not-allowed;transform:none;box-shadow:none}
+.btn.small{min-height:38px;padding:.4rem 1rem;font-size:.9rem}
+
+/* cards */
+.card{background:var(--surface);border-radius:22px;box-shadow:var(--shadow);overflow:hidden;border:1px solid color-mix(in srgb,var(--line) 60%,transparent)}
+.art-card{display:flex;flex-direction:column;text-decoration:none;transition:transform .25s,box-shadow .25s}
+.art-card:hover{transform:translateY(-5px)}
+.frame{aspect-ratio:5/6;background:var(--tint);overflow:hidden;border-radius:22px 22px 0 0;max-width:100%}
+.frame svg,.frame img{width:100%;height:100%;display:block;object-fit:cover}
+.hero-art .frame{border-radius:22px;box-shadow:var(--shadow)}
+.meta{padding:.9rem 1rem 1.1rem;display:flex;flex-direction:column;gap:.15rem}
+.by{font-size:.9rem;color:var(--muted)}
+.pad{padding:1.25rem}
+.tag{display:inline-block;background:var(--tag);color:var(--fg);border-radius:999px;padding:.15rem .75rem;font-size:.8rem;font-weight:700}
+.row{display:flex;flex-wrap:wrap;gap:.6rem;align-items:center}
+.steps{display:grid;gap:1rem;grid-template-columns:repeat(auto-fit,minmax(min(100%,230px),1fr))}
+.step{display:flex;flex-direction:column;gap:.4rem}
+.step b{font-family:var(--f-display);font-size:1.6rem;color:var(--gold-text)}
+.chips{display:grid;gap:.8rem;grid-template-columns:repeat(auto-fit,minmax(min(100%,220px),1fr))}
+.chip{display:flex;gap:.8rem;align-items:center;text-decoration:none;padding:.8rem 1rem}
+.avatar{width:48px;height:48px;border-radius:50%;background:var(--tag);display:grid;place-items:center;font-family:var(--f-display);font-weight:700;flex:none}
+.avatar.lg{width:84px;height:84px;font-size:1.8rem}
+
+/* forms */
+label{font-weight:700;font-size:.9rem;display:block;margin-bottom:.3rem}
+input[type=text],input[type=email],input[type=number],input[type=search],select,textarea{width:100%;font:inherit;color:var(--fg);background:var(--surface);border:1.5px solid var(--line);border-radius:14px;padding:.7rem .9rem;min-height:46px}
+textarea{min-height:96px;resize:vertical}
+.filters{display:grid;gap:.7rem;grid-template-columns:repeat(auto-fit,minmax(min(100%,170px),1fr));margin-bottom:1.25rem}
+.field{display:flex;flex-direction:column}
+.fgrid{display:grid;gap:1rem;grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr))}
+
+/* detail */
+.detail{display:grid;gap:1.5rem}
+@media (min-width:860px){.detail{grid-template-columns:1fr 1fr;align-items:start}}
+.detail .frame{border-radius:22px}
+.history{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:.6rem}
+.history li{display:flex;gap:.7rem;align-items:baseline;border-left:3px solid var(--gold);padding-left:.8rem}
+.history time{font-size:.8rem;color:var(--muted);white-space:nowrap}
+
+/* academy */
+details{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:.9rem 1.1rem}
+details+details{margin-top:.7rem}
+summary{cursor:pointer;font-weight:700;list-style-position:inside}
+details p{margin-top:.6rem}
+.quiz fieldset{border:1px solid var(--line);border-radius:16px;margin:0 0 1rem;padding:.9rem 1rem}
+.quiz legend{font-weight:700;padding-inline:.4rem}
+.opt{display:flex;gap:.6rem;align-items:center;padding:.4rem 0;font-weight:400}
+.opt input{width:20px;height:20px;accent-color:var(--btn)}
+.good{color:#1c7a4a;font-weight:700}
+.bad{color:#b3261e;font-weight:700}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .good{color:#7fe0a6} :root:not([data-theme="light"]) .bad{color:#ff9d94}}
+:root[data-theme="dark"] .good{color:#7fe0a6}
+:root[data-theme="dark"] .bad{color:#ff9d94}
+
+/* studio */
+.stepper{display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:1rem}
+.stepper span{padding:.3rem .9rem;border-radius:999px;background:var(--tag);font-size:.85rem;font-weight:700;opacity:.7}
+.stepper span.on{background:var(--btn);color:var(--btn-fg);opacity:1}
+.studio{display:grid;gap:1.5rem}
+@media (min-width:860px){.studio{grid-template-columns:1.1fr .9fr;align-items:start}}
+.drop{border:2px dashed var(--gold);border-radius:18px;padding:1.2rem;text-align:center;background:var(--surface)}
+
+.stats{display:flex;gap:1.5rem;flex-wrap:wrap}
+.stats div{display:flex;flex-direction:column}
+.stats b{font-family:var(--f-display);font-size:1.5rem}
+.log{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:.5rem}
+.log li{display:flex;justify-content:space-between;gap:1rem;border-bottom:1px solid var(--line);padding-bottom:.4rem}
+.empty{padding:2rem 1rem;text-align:center;color:var(--muted)}
+
+footer{border-top:1px solid var(--line);padding-block:1.5rem 2.5rem;font-size:.9rem;color:var(--muted)}
+footer .wrap{display:flex;flex-direction:column;gap:.5rem}
+#toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(20px + env(safe-area-inset-bottom,0px));background:var(--plum);color:#FFF9F4;padding:.7rem 1.2rem;border-radius:999px;font-weight:700;z-index:40;max-width:calc(100% - 32px);text-align:center;box-shadow:var(--shadow)}
+#toast[hidden]{display:none!important}
+@media (prefers-reduced-motion: reduce){
+  *{animation:none!important;transition:none!important;scroll-behavior:auto!important}
+}
+</style>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <symbol id="logo" viewBox="0 0 200 200">
+    <g fill="none" stroke="currentColor" stroke-width="12" stroke-linecap="round">
+      <path d="M100 170C62 170 40 140 48 104C56 68 102 62 110 96C115 118 90 126 80 112"/>
+      <path d="M100 170C138 170 160 140 152 104C144 68 98 62 90 96C85 118 110 126 120 112"/>
+    </g>
+    <circle cx="100" cy="36" r="10" fill="currentColor"/>
+  </symbol>
+</svg>
+
+<header class="top">
+  <div class="wrap bar">
+    <a class="brand" href="#home"><svg aria-hidden="true"><use href="#logo"/></svg><span>QazaqNFT</span></a>
+    <div class="tools">
+      <span class="wallet" id="wallet" hidden></span>
+      <div class="lang" role="group" aria-label="Language">
+        <button type="button" data-act="lang" data-v="kk">KZ</button>
+        <button type="button" data-act="lang" data-v="ru">RU</button>
+        <button type="button" data-act="lang" data-v="en">EN</button>
+      </div>
+      <button type="button" class="menu-btn" id="menuBtn" data-act="menu" aria-expanded="false" aria-controls="nav" aria-label="Menu">☰</button>
+    </div>
+    <nav id="nav" aria-label="Main"></nav>
+  </div>
+</header>
+<div class="orn" aria-hidden="true"></div>
+<div class="test"><div class="wrap" id="testNote"></div></div>
+
+<main class="wrap" id="app" tabindex="-1"></main>
+
+<div class="orn" aria-hidden="true"></div>
+<footer>
+  <div class="wrap">
+    <strong style="font-family:var(--f-display)">QazaqNFT</strong>
+    <p id="footNote"></p>
+  </div>
+</footer>
+<div id="toast" role="status" aria-live="polite" hidden></div>
+
+<script>
+(function(){
+'use strict';
+
+/* ---------- helpers ---------- */
+var esc=function(s){return String(s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})};
+var $=function(s,r){return (r||document).querySelector(s)};
+var $$=function(s,r){return Array.prototype.slice.call((r||document).querySelectorAll(s))};
+var KEY='qazaqnft-demo-v1';
+function defaults(){return {user:null,balance:100,owned:[],minted:[],log:[],quiz:false,lang:'kk'}}
+var S;
+try{S=Object.assign(defaults(),JSON.parse(localStorage.getItem(KEY)||'null')||{})}catch(e){S=defaults()}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){toast(S.lang==='en'?'Could not save in this browser':S.lang==='ru'?'Не удалось сохранить в браузере':'Бұл браузерде сақтау мүмкін болмады')}}
+var tt;
+function toast(msg){var el=$('#toast');el.textContent=msg;el.hidden=false;clearTimeout(tt);tt=setTimeout(function(){el.hidden=true},2800)}
+function today(){var d=new Date();return d.toISOString().slice(0,10)}
+
+/* ---------- translations (navigation, hero, key labels; long texts stay in Kazakh) ---------- */
+var T={
+ kk:{nav_home:'Басты бет',nav_market:'Маркетплейс',nav_academy:'Академия',nav_studio:'Студия',nav_heritage:'Мұра кітапханасы',nav_profile:'Профиль',nav_account:'Кіру / Әмиян',nav_about:'Біз туралы',
+  hero_title:'Ұлттық өнер — цифрлық болашақта',hero_sub:'Өз туындыңды жасап, NFT ретінде орналастыр',cta_browse:'Туындыларды көру',cta_start:'Бастау',
+  featured:'Таңдаулы туындылар',new_artists:'Жаңа суретшілер',how:'Қалай жұмыс істейді?',buy:'Сатып алу',tok:'тест-токен',owned:'Сізде бар',
+  search:'Атауы немесе автор бойынша іздеу',all:'Барлығы',cat:'Санат',price:'Баға',artist:'Суретші',sort:'Сұрыптау',s_new:'Жаңалары',s_asc:'Бағасы: өсу',s_desc:'Бағасы: кему',empty:'Ештеңе табылмады. Сүзгілерді өзгертіп көріңіз.',
+  test:'Тест режимі: барлық төлемдер демо-әмиян арқылы жүреді, нақты ақша қолданылмайды.',
+  foot:'Платформа тест режимінде жұмыс істейді. Деректер тек осы браузерде сақталады.'},
+ ru:{nav_home:'Главная',nav_market:'Маркетплейс',nav_academy:'Академия',nav_studio:'Студия',nav_heritage:'Библиотека наследия',nav_profile:'Профиль',nav_account:'Вход / Кошелёк',nav_about:'О нас',
+  hero_title:'Национальное искусство — в цифровом будущем',hero_sub:'Создай своё произведение и размести его как NFT',cta_browse:'Смотреть работы',cta_start:'Начать',
+  featured:'Избранные работы',new_artists:'Новые художники',how:'Как это работает?',buy:'Купить',tok:'тест-токенов',owned:'Уже у вас',
+  search:'Поиск по названию или автору',all:'Все',cat:'Категория',price:'Цена',artist:'Художник',sort:'Сортировка',s_new:'Новые',s_asc:'Цена: по возрастанию',s_desc:'Цена: по убыванию',empty:'Ничего не найдено. Попробуйте изменить фильтры.',
+  test:'Тестовый режим: все платежи проходят через демо-кошелёк, реальные деньги не используются.',
+  foot:'Платформа работает в тестовом режиме. Данные хранятся только в этом браузере.'},
+ en:{nav_home:'Home',nav_market:'Marketplace',nav_academy:'Academy',nav_studio:'Studio',nav_heritage:'Heritage library',nav_profile:'Profile',nav_account:'Sign in / Wallet',nav_about:'About',
+  hero_title:'National art in the digital future',hero_sub:'Create your artwork and list it as an NFT',cta_browse:'Browse artworks',cta_start:'Get started',
+  featured:'Featured artworks',new_artists:'New artists',how:'How does it work?',buy:'Buy',tok:'test tokens',owned:'You own this',
+  search:'Search by title or artist',all:'All',cat:'Category',price:'Price',artist:'Artist',sort:'Sort',s_new:'Newest',s_asc:'Price: low to high',s_desc:'Price: high to low',empty:'Nothing found. Try changing the filters.',
+  test:'Test mode: all payments use a demo wallet, no real money is involved.',
+  foot:'The platform runs in test mode. Data is stored only in this browser.'}
+};
+function t(k){return (T[S.lang]&&T[S.lang][k])||T.kk[k]||k}
+var CAT={ornament:{kk:'Ою-өрнек',ru:'Орнамент',en:'Ornament'},painting:{kk:'Кескіндеме',ru:'Живопись',en:'Painting'},calligraphy:{kk:'Каллиграфия',ru:'Каллиграфия',en:'Calligraphy'},digital:{kk:'Цифрлық графика',ru:'Цифровая графика',en:'Digital graphics'}};
+function catName(c){return (CAT[c]&&(CAT[c][S.lang]||CAT[c].kk))||c}
+
+/* ---------- demo data ---------- */
+var ARTISTS=[
+ {id:'1',name:'Айгерім С.',bio:'Қошқар мүйіз өрнегін цифрлық форматта зерттейді. Студент, 2-курс.',fol:128},
+ {id:'2',name:'Дана Ә.',bio:'Киіз және кілем өрнектерінен алтын сызықты композиция жасайды.',fol:94},
+ {id:'3',name:'Мерей Қ.',bio:'Дала табиғатын майлы бояу мен цифрлық кескіндемемен біріктіреді.',fol:76},
+ {id:'4',name:'Нұрай Т.',bio:'Шаңырақ пен күн белгісінен заманауи графика жасайды.',fol:61},
+ {id:'5',name:'Ерлан Б.',bio:'Қазақ әріптерінің каллиграфиясымен айналысады.',fol:43}
+];
+var MOT={horn:['#FBE6EC','#E3D6F2'],gold:['#4E2347','#7A3A6D'],flower:['#A9CCE3','#FBE6EC'],shanyrak:['#A9CCE3','#E3D6F2'],tumar:['#E3D6F2','#FFF9F4'],dombra:['#4E2347','#D96C8C'],silk:['#FBE6EC','#A9CCE3'],sun:['#A9CCE3','#FFF9F4'],letter:['#FFF9F4','#FBE6EC']};
+var MOTNAME={horn:'Қошқар мүйіз',gold:'Алтын тор',flower:'Дала гүлі',shanyrak:'Шаңырақ',tumar:'Тұмар',dombra:'Домбыра',silk:'Жібек жолы',sun:'Күн',letter:'Әріп (Қ)'};
+var ART=[
+ {id:'1',title:'Қошқар мүйіз',artist:'Айгерім С.',aid:'1',price:12,cat:'ornament',motif:'horn',date:'2026-09-14',desc:'Қошқар мүйіз өрнегінің заманауи түсіндірмесі: екі ирек сызық бір-біріне жайлы ұласады.'},
+ {id:'2',title:'Алтын ою',artist:'Дана Ә.',aid:'2',price:12,cat:'ornament',motif:'gold',date:'2026-09-18',desc:'Қою күлгін фондағы алтын ромб торы. Кілем өрнегінің тәртібі мен ырғағынан алынған.'},
+ {id:'3',title:'Дала гүлі',artist:'Мерей Қ.',aid:'3',price:12,cat:'painting',motif:'flower',date:'2026-09-25',desc:'Көктемгі далада бірінші ашылған гүлге арналған жұмсақ түсті сурет.'},
+ {id:'4',title:'Шаңырақ',artist:'Нұрай Т.',aid:'4',price:18,cat:'digital',motif:'shanyrak',date:'2026-10-02',desc:'Үйдің төбесіндегі шаңырақтың цифрлық сызбасы: он екі сәуле бір орталыққа жиналады.'},
+ {id:'5',title:'Қ әрпі',artist:'Ерлан Б.',aid:'5',price:9,cat:'calligraphy',motif:'letter',date:'2026-10-05',desc:'Қазақ алфавитінің ерекше әрпіне арналған каллиграфиялық этюд.'},
+ {id:'6',title:'Домбыра әуені',artist:'Айгерім С.',aid:'1',price:24,cat:'digital',motif:'dombra',date:'2026-10-11',desc:'Домбыраның екі ішегі мен дыбыс шығатын тесігі қарапайым сызықпен берілген.'},
+ {id:'7',title:'Тұмар',artist:'Дана Ә.',aid:'2',price:15,cat:'ornament',motif:'tumar',date:'2026-10-19',desc:'Үшбұрышты тұмар пішінінің геометриялық нұсқасы.'},
+ {id:'8',title:'Жібек жолы',artist:'Мерей Қ.',aid:'3',price:30,cat:'painting',motif:'silk',date:'2026-10-27',desc:'Құм төбелер мен керуеннің сағымдағы бейнесі.'},
+ {id:'9',title:'Күн сәулесі',artist:'Нұрай Т.',aid:'4',price:20,cat:'digital',motif:'sun',date:'2026-11-03',desc:'Он алты сәулелі күн белгісі. Жылы, жарық және ашық көңіл-күй.'}
+];
+function allArt(){return S.minted.concat(ART)}
+function findArt(id){var a=allArt();for(var i=0;i<a.length;i++){if(String(a[i].id)===String(id))return a[i]}return null}
+function artistName(id){for(var i=0;i<ARTISTS.length;i++){if(ARTISTS[i].id===id)return ARTISTS[i].name}return ''}
+function initials(n){return esc((n||'?').trim().charAt(0).toUpperCase())}
+
+/* ---------- artwork drawing ---------- */
+function motifSvg(m,ink,letter){
+ var g=ink||'#C8A24A',r='#D96C8C',h='';
+ var i,k,x,y;
+ if(m==='horn'){
+  h='<g transform="translate(0 28)" fill="none" stroke="'+g+'" stroke-width="7" stroke-linecap="round"><path d="M100 150C62 150 40 120 48 84C56 48 102 42 110 76C115 98 90 106 80 92"/><path d="M100 150C138 150 160 120 152 84C144 48 98 42 90 76C85 98 110 106 120 92"/></g><circle cx="100" cy="62" r="7" fill="'+g+'"/><circle cx="100" cy="196" r="4" fill="'+g+'"/><circle cx="84" cy="196" r="2.5" fill="'+g+'"/><circle cx="116" cy="196" r="2.5" fill="'+g+'"/>';
+ }else if(m==='gold'){
+  for(y=0;y<6;y++){for(x=0;x<5;x++){var cx=20+x*40+(y%2?20:0),cy=36+y*34;h+='<path d="M'+cx+' '+(cy-16)+'L'+(cx+16)+' '+cy+'L'+cx+' '+(cy+16)+'L'+(cx-16)+' '+cy+'Z" fill="none" stroke="'+g+'" stroke-width="2.4"/><circle cx="'+cx+'" cy="'+cy+'" r="3" fill="'+r+'"/>'}}
+ }else if(m==='flower'){
+  h='<path d="M100 134C100 170 96 190 96 218" fill="none" stroke="#4E2347" stroke-width="4" stroke-linecap="round"/><path d="M98 186C80 176 66 178 58 168C74 164 92 170 98 186Z" fill="#4E2347" opacity=".75"/>';
+  for(k=0;k<6;k++){h+='<ellipse cx="100" cy="82" rx="14" ry="32" transform="rotate('+(k*60)+' 100 116)" fill="'+r+'" opacity=".92" stroke="'+g+'" stroke-width="1.5"/>'}
+  h+='<circle cx="100" cy="116" r="12" fill="'+g+'"/>';
+ }else if(m==='shanyrak'){
+  h='<g fill="none" stroke="'+g+'" stroke-width="5"><circle cx="100" cy="120" r="64"/><circle cx="100" cy="120" r="14"/></g><g stroke="'+g+'" stroke-width="4" stroke-linecap="round">';
+  for(k=0;k<12;k++){h+='<line x1="100" y1="106" x2="100" y2="56" transform="rotate('+(k*30)+' 100 120)"/>'}
+  h+='</g><circle cx="100" cy="120" r="5" fill="'+r+'"/>';
+ }else if(m==='tumar'){
+  h='<g fill="none" stroke="'+g+'" stroke-width="5" stroke-linejoin="round"><path d="M100 56L152 168H48Z"/><path d="M100 96L128 152H72Z" stroke-width="3"/></g><circle cx="100" cy="56" r="7" fill="'+r+'"/><circle cx="152" cy="168" r="7" fill="'+r+'"/><circle cx="48" cy="168" r="7" fill="'+r+'"/><circle cx="100" cy="134" r="5" fill="'+g+'"/>';
+ }else if(m==='dombra'){
+  h='<g fill="none" stroke="'+g+'" stroke-width="5" stroke-linecap="round"><ellipse cx="100" cy="162" rx="40" ry="48"/><path d="M100 114V34"/><path d="M96 120V60M104 120V60" stroke-width="1.8"/></g><circle cx="100" cy="162" r="11" fill="none" stroke="'+r+'" stroke-width="4"/><rect x="92" y="24" width="16" height="16" rx="5" fill="'+g+'"/>';
+ }else if(m==='silk'){
+  h='<circle cx="150" cy="60" r="22" fill="'+g+'" opacity=".9"/>';
+  for(i=0;i<4;i++){y=120+i*28;h+='<path d="M-10 '+y+'Q40 '+(y-26)+' 100 '+y+'T210 '+y+'" fill="none" stroke="'+(i%2?r:g)+'" stroke-width="4" stroke-linecap="round"/>'}
+  h+='<g fill="#4E2347"><circle cx="60" cy="104" r="4"/><circle cx="76" cy="106" r="4"/><circle cx="92" cy="108" r="4"/></g>';
+ }else if(m==='sun'){
+  h='<circle cx="100" cy="120" r="30" fill="'+g+'"/><g stroke="'+g+'" stroke-width="5" stroke-linecap="round">';
+  for(k=0;k<16;k++){h+='<line x1="100" y1="72" x2="100" y2="'+(k%2?58:48)+'" transform="rotate('+(k*22.5)+' 100 120)"/>'}
+  h+='</g>';
+ }else{
+  h='<text x="100" y="152" text-anchor="middle" font-size="124" font-weight="700" font-family="Playfair Display,Noto Serif,serif" fill="'+g+'">'+esc(letter||'Қ')+'</text><path d="M44 178Q100 200 156 178" fill="none" stroke="'+r+'" stroke-width="4" stroke-linecap="round"/>';
+ }
+ return h;
+}
+var gid=0;
+function artSvg(a){
+ var c=MOT[a.motif]||MOT.horn,id='gr'+(++gid);
+ return '<svg viewBox="0 0 200 240" role="img" aria-label="'+esc(a.title)+'" preserveAspectRatio="xMidYMid slice"><defs><linearGradient id="'+id+'" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="'+c[0]+'"/><stop offset="1" stop-color="'+c[1]+'"/></linearGradient></defs><rect width="200" height="240" fill="url(#'+id+')"/><rect x="8" y="8" width="184" height="224" rx="6" fill="none" stroke="#C8A24A" stroke-width="1.5" opacity=".85"/>'+motifSvg(a.motif,'#C8A24A',a.letter)+'</svg>';
+}
+function visual(a){return a.img?'<img src="'+a.img+'" alt="'+esc(a.title)+'">':artSvg(a)}
+function card(a){
+ return '<a class="card art-card" href="#art-'+esc(a.id)+'"><div class="frame">'+visual(a)+'</div><div class="meta"><h3>'+esc(a.title)+'</h3><p class="by">'+esc(a.artist)+'</p><p class="price">'+a.price+' '+t('tok')+'</p></div></a>';
+}
+function grid(list){return list.length?'<div class="grid">'+list.map(card).join('')+'</div>':'<p class="empty">'+t('empty')+'</p>'}
+
+/* ---------- views ---------- */
+function vHome(){
+ var feat=ART.slice(0,3);
+ var na=ARTISTS.slice(0,3).map(function(a){return '<a class="card chip" href="#artist-'+a.id+'"><span class="avatar">'+initials(a.name)+'</span><span><strong>'+esc(a.name)+'</strong><br><span class="by">'+a.fol+' жазылушы · демо</span></span></a>'}).join('');
+ return '<section class="hero"><div class="copy"><span class="eyebrow">Білім беру маркетплейсі</span><h1>'+t('hero_title')+'</h1><div class="rule" style="width:140px"></div><p class="muted" style="font-size:1.15rem">'+t('hero_sub')+'</p><div class="actions"><a class="btn" href="#market">'+t('cta_browse')+'</a><a class="btn ghost" href="#academy">'+t('cta_start')+'</a></div></div><div class="hero-art"><div class="frame">'+artSvg(ART[0])+'</div></div></section>'+
+ '<section class="section"><div class="head"><h2>'+t('featured')+'</h2></div>'+grid(feat)+'</section>'+
+ '<section class="section"><div class="head"><span class="eyebrow">Үш қадам</span><h2>'+t('how')+'</h2></div><div class="steps">'+
+  '<div class="card pad step"><b>1</b><h3>Үйрен</h3><p class="muted">Академияда NFT, блокчейн және ұлттық өрнек негіздерін қысқа сабақтардан оқы.</p></div>'+
+  '<div class="card pad step"><b>2</b><h3>Жаса</h3><p class="muted">Студияда суретті жүктеп, атауы мен бағасын жазып, NFT жаса.</p></div>'+
+  '<div class="card pad step"><b>3</b><h3>Орналастыр</h3><p class="muted">Туынды маркетплейсте көрінеді. Басқалар оны демо-әмиянмен сатып ала алады.</p></div></div></section>'+
+ '<section class="section"><div class="head"><h2>'+t('new_artists')+'</h2></div><div class="chips">'+na+'</div></section>';
+}
+
+var F={q:'',cat:'all',price:'all',artist:'all',sort:'new'};
+function filtered(){
+ var q=F.q.trim().toLowerCase();
+ var list=allArt().filter(function(a){
+  if(q&&(a.title+' '+a.artist).toLowerCase().indexOf(q)<0)return false;
+  if(F.cat!=='all'&&a.cat!==F.cat)return false;
+  if(F.artist!=='all'&&a.artist!==F.artist)return false;
+  if(F.price==='lt15'&&a.price>15)return false;
+  if(F.price==='mid'&&(a.price<=15||a.price>25))return false;
+  if(F.price==='gt25'&&a.price<=25)return false;
+  return true;
+ });
+ if(F.sort==='asc')list.sort(function(a,b){return a.price-b.price});
+ if(F.sort==='desc')list.sort(function(a,b){return b.price-a.price});
+ return list;
+}
+function vMarket(){
+ var cats=Object.keys(CAT).map(function(c){return '<option value="'+c+'"'+(F.cat===c?' selected':'')+'>'+catName(c)+'</option>'}).join('');
+ var names=[];allArt().forEach(function(a){if(names.indexOf(a.artist)<0)names.push(a.artist)});
+ var arts=names.map(function(n){return '<option value="'+esc(n)+'"'+(F.artist===n?' selected':'')+'>'+esc(n)+'</option>'}).join('');
+ function sel(v,cur,lbl){return '<option value="'+v+'"'+(cur===v?' selected':'')+'>'+lbl+'</option>'}
+ return '<div class="head"><span class="eyebrow">'+t('nav_market')+'</span><h2>'+t('nav_market')+'</h2></div>'+
+ '<div class="filters"><div class="field"><label for="f-q">'+t('search').split(' ')[0]+'</label><input id="f-q" type="search" data-f="q" value="'+esc(F.q)+'" placeholder="'+esc(t('search'))+'"></div>'+
+ '<div class="field"><label for="f-cat">'+t('cat')+'</label><select id="f-cat" data-f="cat">'+sel('all',F.cat,t('all'))+cats+'</select></div>'+
+ '<div class="field"><label for="f-price">'+t('price')+'</label><select id="f-price" data-f="price">'+sel('all',F.price,t('all'))+sel('lt15',F.price,'≤ 15')+sel('mid',F.price,'16 – 25')+sel('gt25',F.price,'> 25')+'</select></div>'+
+ '<div class="field"><label for="f-artist">'+t('artist')+'</label><select id="f-artist" data-f="artist">'+sel('all',F.artist,t('all'))+arts+'</select></div>'+
+ '<div class="field"><label for="f-sort">'+t('sort')+'</label><select id="f-sort" data-f="sort">'+sel('new',F.sort,t('s_new'))+sel('asc',F.sort,t('s_asc'))+sel('desc',F.sort,t('s_desc'))+'</select></div></div>'+
+ '<div id="grid">'+grid(filtered())+'</div>';
+}
+
+function vArt(id){
+ var a=findArt(id);
+ if(!a)return '<p class="empty">'+t('empty')+'</p><p style="text-align:center"><a class="btn" href="#market">'+t('nav_market')+'</a></p>';
+ var owned=S.owned.indexOf(String(a.id))>=0, mine=!!a.mine;
+ var hist='<li><time>'+esc(a.date||'')+'</time><span>'+esc(a.artist)+' — NFT жасады (mint)</span></li>';
+ S.log.filter(function(l){return l.art===String(a.id)&&l.type==='buy'}).forEach(function(l){hist='<li><time>'+esc(l.d)+'</time><span>'+esc(S.user?S.user.name:'Сіз')+' — сатып алды ('+l.amt+' '+t('tok')+')</span></li>'+hist});
+ var btn=mine?'<button class="btn" disabled>Бұл — сіздің туындыңыз</button>':owned?'<button class="btn" disabled>'+t('owned')+'</button>':'<button class="btn" data-act="buy" data-id="'+esc(a.id)+'">'+t('buy')+' · '+a.price+' '+t('tok')+'</button>';
+ var link=a.aid?'<a href="#artist-'+a.aid+'">'+esc(a.artist)+'</a>':esc(a.artist);
+ return '<p><a href="#market">← '+t('nav_market')+'</a></p><div class="detail" style="margin-top:1rem"><div class="frame card">'+visual(a)+'</div><div class="stack"><span class="tag">'+catName(a.cat)+'</span><h1 style="font-size:clamp(1.8rem,5vw,2.6rem)">'+esc(a.title)+'</h1><p class="muted">'+link+'</p><p>'+esc(a.desc||'')+'</p><p class="price" style="font-size:1.5rem">'+a.price+' '+t('tok')+'</p><div class="actions">'+btn+'</div><p class="muted" style="font-size:.85rem">Тест режимі: төлем демо-әмиянмен жүреді.</p><div><h3 style="margin-bottom:.6rem">Ие болу тарихы</h3><ul class="history">'+hist+'</ul></div></div></div>';
+}
+
+var LESSONS=[
+ ['NFT дегеніміз не?','NFT — блокчейнде жазылған бірегей белгі. Ол цифрлық туындының авторы мен иесі кім екенін көрсетеді. Файлдың көшірмесін кез келген адам көре алады, ал түпнұсқа иесі жазбада тұрады.'],
+ ['Блокчейн қарапайым тілмен','Блокчейн — бір-бірімен байланысқан жазбалар тізбегі. Жазба қосылғаннан кейін оны жасырын өзгерту өте қиын. Сондықтан кім қашан не жасағаны ашық сақталады.'],
+ ['Әмиян дегеніміз не?','Әмиян — токендер мен NFT сақталатын цифрлық шот. Бұл платформада демо-әмиян бар: бастапқыда 100 тест-токен беріледі. Олар нақты ақша емес.'],
+ ['Ұлттық өрнек негіздері','Ою-өрнек — қазақ өнерінің тілі. Қошқар мүйіз, шаңырақ, өсімдік өрнектері киізде, кілемде, ағаш бұйымдарда қолданылған. Цифрлық жұмыста өрнекті өзіңше өзгертуге болады, бірақ оның мағынасын құрметтеген жөн.'],
+ ['Mint дегеніміз не?','Mint — файлды блокчейнге NFT етіп жазу. Студияда сурет жүктеп, атауы мен бағасын жазып, «NFT жасау» батырмасын басасың. Тест режимінде бұл демо түрде ғана жүреді.']
+];
+var QUIZ=[
+ ['NFT дегеніміз не?',['Банк картасының түрі','Бірегей цифрлық меншік белгісі','Фотоаппарат түрі'],1],
+ ['Блокчейн дегеніміз не?',['Жазбалардың өзгертуі қиын тізбегі','Ойын консолі','Сурет форматы'],0],
+ ['Mint деген не?',['Суретті өшіру','Әмиянды бұғаттау','Туындыны блокчейнге NFT етіп жазу'],2]
+];
+function vAcademy(){
+ var ls=LESSONS.map(function(l,i){return '<details'+(i===0?' open':'')+'><summary>'+(i+1)+'. '+l[0]+'</summary><p>'+l[1]+'</p></details>'}).join('');
+ var qs=QUIZ.map(function(q,i){return '<fieldset><legend>'+(i+1)+'. '+q[0]+'</legend>'+q[1].map(function(o,j){return '<label class="opt"><input type="radio" name="q'+i+'" value="'+j+'"> '+o+'</label>'}).join('')+'</fieldset>'}).join('');
+ return '<div class="head"><span class="eyebrow">'+t('nav_academy')+'</span><h2>NFT мен блокчейнді үйрен</h2><p class="muted">Бес қысқа сабақ және шағын тест. Бастау үшін ешқандай білім қажет емес.</p></div>'+ls+
+ '<div class="head" style="margin-top:2rem"><h2>Шағын тест</h2></div><form class="quiz" id="quiz">'+qs+'<button class="btn" type="submit">Тексеру</button> <p id="quizOut" style="margin-top:1rem" aria-live="polite">'+(S.quiz?'<span class="good">Тест тапсырылған: «Білімпаз» белгісі профильде.</span>':'')+'</p></form>';
+}
+
+var ST={step:1,img:null,motif:'horn',title:'',desc:'',cat:'ornament',price:10};
+function stArt(){return {id:'preview',title:ST.title||'Туынды атауы',artist:S.user?S.user.name:'Автор',price:ST.price||0,cat:ST.cat,motif:ST.motif,img:ST.img,desc:ST.desc}}
+function vStudio(){
+ var steps=['1. Файл','2. Мәліметтер','3. NFT жасау'].map(function(s,i){return '<span'+(ST.step===i+1?' class="on"':'')+'>'+s+'</span>'}).join('');
+ var body='';
+ if(ST.step===1){
+  var mo=Object.keys(MOTNAME).map(function(k){return '<option value="'+k+'"'+(ST.motif===k?' selected':'')+'>'+MOTNAME[k]+'</option>'}).join('');
+  body='<div class="stack"><div class="drop"><label for="file">Суретті жүктеңіз (JPG, PNG)</label><input id="file" type="file" accept="image/*"><p class="muted" style="margin-top:.5rem;font-size:.85rem">Файл жоқ болса, төмендегі өрнекті таңдаңыз.</p></div><div class="field"><label for="motif">Өрнек үлгісі</label><select id="motif" data-s="motif">'+mo+'</select></div><div class="actions"><button class="btn" data-act="next">Келесі қадам</button></div></div>';
+ }else if(ST.step===2){
+  var co=Object.keys(CAT).map(function(c){return '<option value="'+c+'"'+(ST.cat===c?' selected':'')+'>'+catName(c)+'</option>'}).join('');
+  body='<div class="stack"><div class="field"><label for="s-title">Атауы</label><input id="s-title" type="text" data-s="title" value="'+esc(ST.title)+'" maxlength="40"></div><div class="field"><label for="s-desc">Сипаттамасы</label><textarea id="s-desc" data-s="desc" maxlength="240">'+esc(ST.desc)+'</textarea></div><div class="fgrid"><div class="field"><label for="s-cat">Санаты</label><select id="s-cat" data-s="cat">'+co+'</select></div><div class="field"><label for="s-price">Бағасы ('+t('tok')+')</label><input id="s-price" type="number" min="1" max="500" step="1" data-s="price" value="'+ST.price+'"></div></div><div class="actions"><button class="btn ghost" data-act="back">Артқа</button><button class="btn" data-act="next">Келесі қадам</button></div></div>';
+ }else{
+  body='<div class="stack"><p>Мәліметтерді тексеріңіз. NFT жасалғаннан кейін туынды маркетплейсте көрінеді.</p><ul class="history"><li><span><b>Атауы:</b> '+esc(ST.title||'—')+'</span></li><li><span><b>Санаты:</b> '+catName(ST.cat)+'</span></li><li><span><b>Бағасы:</b> '+ST.price+' '+t('tok')+'</span></li></ul>'+(S.user?'':'<p class="bad">NFT жасау үшін алдымен <a href="#account">тіркеліңіз</a>.</p>')+'<div class="actions"><button class="btn ghost" data-act="back">Артқа</button><button class="btn" data-act="mint"'+(S.user?'':' disabled')+'>NFT жасау (mint)</button></div></div>';
+ }
+ return '<div class="head"><span class="eyebrow">'+t('nav_studio')+'</span><h2>Алғашқы NFT-ңді жаса</h2></div><div class="stepper">'+steps+'</div><div class="studio"><div class="card pad">'+body+'</div><div><p class="eyebrow" style="margin-bottom:.5rem">Алдын ала көрініс</p><div class="card art-card" style="max-width:300px"><div class="frame" id="sp">'+visual(stArt())+'</div><div class="meta"><h3 id="spt">'+esc(stArt().title)+'</h3><p class="by">'+esc(stArt().artist)+'</p><p class="price">'+(ST.price||0)+' '+t('tok')+'</p></div></div></div></div>';
+}
+
+var HER=[
+ ['horn','Қошқар мүйіз','Малдың молдығын, күш пен батылдықты білдіреді. Қазақ өрнегінің ең танымал белгісі.'],
+ ['shanyrak','Шаңырақ','Үйдің төбесіндегі дөңгелек. Отбасының тірегі мен бірлікті білдіреді.'],
+ ['flower','Дала гүлі','Өсімдік өрнектері табиғатқа, көктемге және өсуге байланысты қолданылады.'],
+ ['tumar','Тұмар','Үшбұрышты пішін. Қорғау мен тілек белгісі ретінде киімде және әшекейде кездеседі.'],
+ ['sun','Күн белгісі','Жарық, жылу және өмірдің бастауын көрсетеді.'],
+ ['silk','Жібек жолы','Керуен жолының ырғағын еске салатын толқынды сызықтар.']
+];
+function vHeritage(){
+ var cs=HER.map(function(h){return '<div class="card"><div class="frame" style="aspect-ratio:1/1">'+artSvg({title:h[1],motif:h[0]})+'</div><div class="meta"><h3>'+h[1]+'</h3><p class="muted">'+h[2]+'</p></div></div>'}).join('');
+ return '<div class="head"><span class="eyebrow">'+t('nav_heritage')+'</span><h2>Өрнектер мен мағыналары</h2><p class="muted">Мағыналар өңірге және шеберге қарай өзгеруі мүмкін. Бұл бастапқы анықтамалық.</p></div><div class="grid">'+cs+'</div><p style="margin-top:1.5rem"><button class="btn ghost" data-act="goOrn">Ою-өрнек санатындағы туындыларды көру</button></p>';
+}
+
+function badges(){
+ var b=[];
+ if(S.minted.length)b.push('Алғашқы NFT');
+ if(S.owned.length)b.push('Алғашқы коллекция');
+ if(S.quiz)b.push('Білімпаз');
+ return b;
+}
+function profileBlock(name,bio,fol,port,coll,bd,demo){
+ return '<div class="card pad row" style="gap:1.2rem"><span class="avatar lg">'+initials(name)+'</span><div class="stack" style="gap:.5rem;flex:1;min-width:200px"><h2>'+esc(name)+'</h2><p class="muted">'+esc(bio)+(demo?' <span class="tag">демо-профиль</span>':'')+'</p><div class="stats"><div><b>'+port.length+'</b><span class="by">Портфолио</span></div><div><b>'+coll+'</b><span class="by">Сатылым</span></div><div><b>'+fol+'</b><span class="by">Жазылушы</span></div></div>'+(bd.length?'<div class="row">'+bd.map(function(x){return '<span class="tag">★ '+x+'</span>'}).join('')+'</div>':'')+'</div></div><div class="head" style="margin-top:2rem"><h2>Портфолио</h2></div>'+(port.length?grid(port):'<p class="empty">Әзірге туынды жоқ. <a href="#studio">Студияға</a> барып алғашқы NFT-ді жасаңыз.</p>');
+}
+function vArtist(id){
+ var a=null;ARTISTS.forEach(function(x){if(x.id===id)a=x});
+ if(!a)return vHome();
+ var port=ART.filter(function(w){return w.aid===a.id});
+ return '<p><a href="#market">← '+t('nav_market')+'</a></p><div style="margin-top:1rem">'+profileBlock(a.name,a.bio,a.fol,port,Math.round(a.fol/12),['Үздік суретші'],true)+'</div>';
+}
+function vProfile(){
+ if(!S.user)return '<div class="card pad stack"><h2>Профиль</h2><p>Профильді көру үшін алдымен тіркеліңіз.</p><div class="actions"><a class="btn" href="#account">Кіру / Тіркелу</a></div></div>';
+ var coll=S.owned.map(findArt).filter(Boolean);
+ return profileBlock(S.user.name,S.user.email,0,S.minted,0,badges(),false)+'<div class="head" style="margin-top:2rem"><h2>Менің коллекциям</h2></div>'+(coll.length?grid(coll):'<p class="empty">Коллекция бос. <a href="#market">Маркетплейске</a> барып бірінші туындыны алыңыз.</p>');
+}
+
+function vAccount(){
+ if(!S.user){
+  return '<div class="head"><span class="eyebrow">'+t('nav_account')+'</span><h2>Кіру / Тіркелу</h2><p class="muted">Тест режимі: құпиясөз қажет емес, деректер тек осы браузерде сақталады.</p></div><form class="card pad stack" id="reg" style="max-width:480px"><div class="field"><label for="r-name">Атыңыз</label><input id="r-name" type="text" required maxlength="40" autocomplete="name"></div><div class="field"><label for="r-mail">Электрондық пошта</label><input id="r-mail" type="email" required autocomplete="email"></div><button class="btn" type="submit">Демо-әмиян ашу</button><p class="muted" style="font-size:.85rem">Бастапқыда 100 тест-токен беріледі.</p></form>';
+ }
+ var log=S.log.length?'<ul class="log">'+S.log.map(function(l){return '<li><span>'+esc(l.text)+'</span><span class="'+(l.amt<0?'bad':'good')+'">'+(l.amt>0?'+':'')+l.amt+'</span></li>'}).join('')+'</ul>':'<p class="muted">Әрекеттер әлі жоқ.</p>';
+ return '<div class="head"><span class="eyebrow">'+t('nav_account')+'</span><h2>Сәлем, '+esc(S.user.name)+'</h2></div><div class="fgrid"><div class="card pad stack"><p class="by">Демо-әмиян балансы</p><p class="price" style="font-size:2.2rem;font-family:var(--f-display)">'+S.balance+' '+t('tok')+'</p><div class="actions"><button class="btn small" data-act="topup">+50 тест-токен</button><a class="btn small ghost" href="#market">'+t('nav_market')+'</a></div></div><div class="card pad stack"><h3>Әрекеттер тарихы</h3>'+log+'</div></div><div class="actions" style="margin-top:1.5rem"><a class="btn ghost small" href="#profile">'+t('nav_profile')+'</a><button class="btn ghost small" data-act="logout">Шығу</button><button class="btn ghost small" data-act="reset">Демо деректерді тазалау</button></div>';
+}
+
+var FAQ=[
+ ['Бұл нақты ақша ма?','Жоқ. Платформа тест режимінде жұмыс істейді. Барлық төлем демо-әмиянмен жүреді.'],
+ ['NFT жасау үшін не керек?','Тек сурет және атау. Академиядан қысқа сабақтарды оқып, Студияда қадамдық нұсқауды орындаңыз.'],
+ ['Менің жұмысымды басқалар көре ме?','Қазіргі прототипте деректер тек сіздің браузеріңізде сақталады. Ортақ маркетплейс үшін кейін сервер қосылады.'],
+ ['Қай тілдерде қолжетімді?','Қазақ тілі негізгі, орыс және ағылшын тілдері мәзірдегі ауыстырғыш арқылы қосылған.'],
+ ['Байланыс','Командаға жазу үшін өз поштаңызды осында қосыңыз.']
+];
+function vAbout(){
+ var f=FAQ.map(function(q){return '<details><summary>'+q[0]+'</summary><p>'+q[1]+'</p></details>'}).join('');
+ return '<div class="head"><span class="eyebrow">'+t('nav_about')+'</span><h2>QazaqNFT туралы</h2></div><div class="stack"><p>QazaqNFT — студенттер мен жас суретшілерге арналған білім беру маркетплейсі. Мұнда қазақтың ою-өрнегін, кескіндемесін, каллиграфиясын және цифрлық графикасын NFT ретінде жасап орналастыруға болады.</p><div class="steps"><div class="card pad"><h3>Мақсаты</h3><p class="muted">Ұлттық өнерді цифрлық форматқа көшіру және бастаушыларға NFT жасауды үйрету.</p></div><div class="card pad"><h3>Кімге арналған</h3><p class="muted">Студент-суретшілер, өнер сүйер қауым, оқушылар мен ұстаздар.</p></div><div class="card pad"><h3>Команда</h3><p class="muted">Жоба авторларының аты-жөні осында жазылады.</p></div></div></div><div class="head" style="margin-top:2rem"><h2>Жиі қойылатын сұрақтар</h2></div>'+f;
+}
+
+/* ---------- router & render ---------- */
+var NAV=[['home','nav_home'],['market','nav_market'],['academy','nav_academy'],['studio','nav_studio'],['heritage','nav_heritage'],['profile','nav_profile'],['account','nav_account'],['about','nav_about']];
+function current(){var h=location.hash.slice(1)||'home',v=h,p=null;
+ if(h.indexOf('art-')===0){v='art';p=h.slice(4)}else if(h.indexOf('artist-')===0){v='artist';p=h.slice(7)}
+ return {v:v,p:p};
+}
+function renderChrome(){
+ var c=current();
+ $('#nav').innerHTML=NAV.map(function(n){return '<a href="#'+n[0]+'"'+(c.v===n[0]?' aria-current="page"':'')+'>'+t(n[1])+'</a>'}).join('');
+ $$('.lang button').forEach(function(b){b.setAttribute('aria-pressed',b.dataset.v===S.lang?'true':'false')});
+ var w=$('#wallet');if(S.user){w.hidden=false;w.textContent=S.balance+' '+t('tok')}else{w.hidden=true}
+ $('#testNote').textContent=t('test');$('#footNote').textContent=t('foot');
+ document.documentElement.lang=S.lang;
+}
+function render(keepScroll){
+ var c=current(),h='';
+ if(c.v==='home')h=vHome();else if(c.v==='market')h=vMarket();else if(c.v==='art')h=vArt(c.p);else if(c.v==='artist')h=vArtist(c.p);
+ else if(c.v==='academy')h=vAcademy();else if(c.v==='studio')h=vStudio();else if(c.v==='heritage')h=vHeritage();
+ else if(c.v==='profile')h=vProfile();else if(c.v==='account')h=vAccount();else if(c.v==='about')h=vAbout();else h=vHome();
+ $('#app').innerHTML='<div class="view">'+h+'</div>';
+ renderChrome();
+ if(!keepScroll)window.scrollTo(0,0);
+}
+window.addEventListener('hashchange',function(){$('#nav').classList.remove('open');$('#menuBtn').setAttribute('aria-expanded','false');render()});
+
+/* ---------- actions ---------- */
+function go(h){if(location.hash==='#'+h)render();else location.hash=h}
+function resize(file,cb){
+ var fr=new FileReader();
+ fr.onload=function(){var im=new Image();im.onload=function(){
+  var max=640,r=Math.min(1,max/Math.max(im.width,im.height)),cv=document.createElement('canvas');
+  cv.width=Math.round(im.width*r);cv.height=Math.round(im.height*r);
+  cv.getContext('2d').drawImage(im,0,0,cv.width,cv.height);
+  cb(cv.toDataURL('image/jpeg',.82));
+ };im.onerror=function(){toast('Сурет оқылмады')};im.src=fr.result};
+ fr.readAsDataURL(file);
+}
+function updPreview(){var a=stArt(),f=$('#sp');if(f){f.innerHTML=visual(a);$('#spt').textContent=a.title}}
+
+document.addEventListener('click',function(e){
+ var b=e.target.closest('[data-act]');if(!b)return;
+ var act=b.dataset.act;
+ if(act==='lang'){S.lang=b.dataset.v;save();render(true)}
+ else if(act==='menu'){var n=$('#nav'),o=n.classList.toggle('open');b.setAttribute('aria-expanded',o?'true':'false')}
+ else if(act==='buy'){
+  var a=findArt(b.dataset.id);if(!a)return;
+  if(!S.user){toast('Алдымен тіркеліңіз');go('account');return}
+  if(S.balance<a.price){toast('Балансты толықтырыңыз: жеткіліксіз');return}
+  S.balance-=a.price;S.owned.push(String(a.id));S.log.unshift({type:'buy',art:String(a.id),d:today(),text:'Сатып алу: '+a.title,amt:-a.price});save();render(true);toast('Туынды коллекцияңызға қосылды');
+ }
+ else if(act==='topup'){S.balance+=50;S.log.unshift({type:'top',d:today(),text:'Демо-әмиянды толықтыру',amt:50});save();render(true);toast('+50 тест-токен')}
+ else if(act==='logout'){S.user=null;save();go('home');render()}
+ else if(act==='reset'){S=defaults();save();ST={step:1,img:null,motif:'horn',title:'',desc:'',cat:'ornament',price:10};go('home');render();toast('Демо деректер тазаланды')}
+ else if(act==='next'){
+  if(ST.step===2&&!ST.title.trim()){toast('Атауын жазыңыз');return}
+  if(ST.step===2&&!(ST.price>=1)){toast('Бағаны енгізіңіз');return}
+  ST.step=Math.min(3,ST.step+1);render(true)}
+ else if(act==='back'){ST.step=Math.max(1,ST.step-1);render(true)}
+ else if(act==='mint'){
+  if(!S.user){toast('Алдымен тіркеліңіз');return}
+  var id='m'+Date.now(),c=MOT[ST.motif]||MOT.horn;
+  var w={id:id,title:ST.title.trim(),artist:S.user.name,price:Math.round(ST.price),cat:ST.cat,motif:ST.motif,img:ST.img,desc:ST.desc.trim()||'Студияда жасалған туынды.',date:today(),mine:true};
+  S.minted.unshift(w);S.log.unshift({type:'mint',art:id,d:today(),text:'NFT жасалды: '+w.title,amt:0});save();
+  ST={step:1,img:null,motif:'horn',title:'',desc:'',cat:'ornament',price:10};
+  toast('NFT жасалды (демо)');go('art-'+id);
+ }
+ else if(act==='goOrn'){F.cat='ornament';go('market')}
+});
+document.addEventListener('input',function(e){
+ var el=e.target,f=el.dataset&&el.dataset.f,s=el.dataset&&el.dataset.s;
+ if(f){F[f]=el.value;var g=$('#grid');if(g)g.innerHTML=grid(filtered())}
+ if(s){ST[s]=el.type==='number'?Number(el.value):el.value;if(s==='title'||s==='price'||s==='motif'){updPreview();var p=$('.studio .price');if(p)p.textContent=(ST.price||0)+' '+t('tok')}}
+});
+document.addEventListener('change',function(e){
+ var el=e.target;
+ if(el.id==='file'&&el.files&&el.files[0]){
+  var file=el.files[0];
+  if(file.type.indexOf('image/')!==0){toast('Тек сурет файлын таңдаңыз');return}
+  if(file.size>8*1024*1024){toast('Файл тым үлкен (8 МБ дейін)');return}
+  resize(file,function(d){ST.img=d;updPreview();toast('Сурет жүктелді')});
+ }
+ if(el.dataset&&el.dataset.f){F[el.dataset.f]=el.value;var g=$('#grid');if(g)g.innerHTML=grid(filtered())}
+ if(el.dataset&&el.dataset.s==='motif'){ST.img=null;ST.motif=el.value;updPreview()}
+});
+document.addEventListener('submit',function(e){
+ var f=e.target;e.preventDefault();
+ if(f.id==='reg'){
+  var n=$('#r-name').value.trim(),m=$('#r-mail').value.trim();
+  if(!n||!m)return;
+  S.user={name:n,email:m};S.log.unshift({type:'init',d:today(),text:'Демо-әмиян ашылды',amt:S.balance});save();render(true);toast('Қош келдіңіз, '+n);
+ }
+ if(f.id==='quiz'){
+  var ok=0,all=true;
+  QUIZ.forEach(function(q,i){var v=f.querySelector('input[name="q'+i+'"]:checked');if(!v){all=false}else if(Number(v.value)===q[2]){ok++}});
+  var out=$('#quizOut');
+  if(!all){out.innerHTML='<span class="bad">Барлық сұраққа жауап беріңіз.</span>';return}
+  if(ok===QUIZ.length){S.quiz=true;save();out.innerHTML='<span class="good">Керемет: '+ok+' / '+QUIZ.length+'. «Білімпаз» белгісі профильге қосылды.</span>'}
+  else{out.innerHTML='<span class="bad">Дұрыс жауап: '+ok+' / '+QUIZ.length+'. Сабақтарды қайта оқып, қайталап көріңіз.</span>'}
+ }
+});
+
+render();
+})();
+</script>
+</body>
+</html>
